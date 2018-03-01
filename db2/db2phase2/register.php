@@ -8,9 +8,20 @@ echo "<h1>Sign Up</h1>";
 echo "<p>Please fill this form to create an account.</p>";
 
 $username_err = $pwd_err = $email_err = $loca_err = $username_err2 = " ";
+
+//get data and time
 $da = date_default_timezone_set("America/New_York");
 $d = date("Y-m-d h:i:sa");
-$username = $pwd = $email = $location = $submit = "";
+
+//get location
+//http://www.developphp.com/video/PHP/GeoPlugin-Tutorial-Get-User-Location-Information-IP-Detection
+$geo = unserialize(file_get_contents("http://www.geoplugin.net/php.gp?ip=?"));
+$city = $geo["geoplugin_city"];
+$state = $geo["geoplugin_region"];
+$loc = $city. ',' .$state;
+
+//$username = $pwd = $email = $location = $submit = "";
+$username = $pwd = $email = $submit = "";
 
 if(isset($_POST['username'])){
 $username = $_POST['username'];
@@ -21,9 +32,9 @@ $pwd = $_POST['pwd'];
 if(isset($_POST['email'])){
 $email = $_POST['email'];
 }
-if(isset($_POST['location'])){
+/*if(isset($_POST['location'])){
 $location = $_POST['location'];
-}
+}*/
 if(isset($_POST['submit'])){
 $submit = $_POST['submit'];
 }
@@ -40,10 +51,14 @@ if (empty($username)){
 }if (empty($email)){
 	$email_err = "<p>Please enter a email.</p>";
 	echo $email_err;
-}if (empty($location)){
+}
+/*if (empty($location)){
 	$location_err = "<p>Please enter your location.</p>";
 	echo $location_err;
-} if( (!empty($username)) && (!empty($pwd)) && (!empty($email)) && (!empty($location)) ) {
+} */
+//if( (!empty($username)) && (!empty($pwd)) && (!empty($email)) && (!empty($location)) ) {
+if( (!empty($username)) && (!empty($pwd)) && (!empty($email)) ) {
+	
 	//check for duplicates
 	$get_num_username = "SELECT * FROM `user` WHERE `username` = '$username' ";
 	$check_for_username = mysqli_query($conn,$get_num_username);
@@ -59,7 +74,7 @@ if (empty($username)){
 	}else {
 		///*
 		$sql = "INSERT INTO `user`(`username`, `password`, `email`, `location`, `regis_date`)
-		VALUES ('$username','$pwd','$email','$location','$d')";
+		VALUES ('$username','$pwd','$email','$loc','$d')";
 		$result = mysqli_query($conn,$sql);
 		//*/
 	header("Location: login.php");
@@ -88,7 +103,7 @@ body{ font: 14px sans-serif; }
 	<input type="text" name="username" placeholder="Username"><br>
 	<input type="text" name="email" placeholder="Email"><br>
 	<input type="password" name="pwd" placeholder="Password"><br>
-	<input type="text" name="location" placeholder="City, State"><br> 
+	<!-- <input type="text" name="location" placeholder="City, State"><br> -->
 	<input type="submit" name="submit" value= "Sign Up">
 </form>
 </div>
