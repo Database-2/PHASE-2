@@ -1,3 +1,44 @@
+<?php
+include 'config.php';
+session_start();
+
+echo "<h2>Sign In</h2>";
+echo "<p>Please enter your username and password.</p>";
+
+$username = $pwd = $login = "";
+
+if(isset($_POST['username'])){
+$username = $_POST['username'];
+}
+if(isset($_POST['pwd'])){
+$pwd = $_POST['pwd'];
+}
+if(isset($_POST['login'])){
+$login = $_POST['login'];
+}
+if ($login) {
+	if (empty($username)){
+		$username_err = "<p>Please enter a username.</p>";
+		echo $username_err;
+	}if (empty($pwd)){
+		$pwd_err = "<p>Please enter a password.</p>";
+		echo $pwd_err;
+	}if( (!empty($username)) && (!empty($pwd))){
+		# code..
+		$sql = "SELECT * FROM user WHERE username = '$username' AND password = '$pwd'";
+		$result = mysqli_query($conn,$sql); 
+		if(!$row = mysqli_fetch_assoc($result)){
+		echo "You username or password in incorrect";
+		}else {
+		//echo "You are logged in!";
+		$_SESSION['username']=$username;
+		header("Location: home.php");
+
+	}
+}
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,16 +53,11 @@ body{ font: 14px sans-serif; }
 <body>	
 
 <div class="wrapper">
-<h2>Sign In</h2>
-<p>Please fill this form to create an account.</p>
 
-<form action="signin.php" method="POST">
+<form action="login.php" method="POST">
 	<input type="text" name="username" placeholder="Username"><br>
 	<input type="password" name="pwd" placeholder="Password"><br>
-   
-    <div class="form-group">
-    <input type="submit" class="btn btn-primary" value="Login">
-    </div>
+    <input type="submit"  name= "login" value="Login"><br>
     <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
 </form>
 </div>

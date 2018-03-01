@@ -1,3 +1,12 @@
+<?php
+include 'config.php';
+session_start();
+
+if(isset($_SESSION['username'])){
+  echo "Welcome, " .$_SESSION['username']. "!";
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,8 +67,11 @@
 <body style="font-family:Verdana;">
 
 <div class="topright">
-    <input type="submit" name="submit" value= "Sign Out">
+  <form action="logout.php" method="POST">
+    <input type="submit" name="logout" value= "Sign Out">
+  </form>  
   </div>
+
 
 <div style="background-color:#ffffff;padding:15px;">
   <center>

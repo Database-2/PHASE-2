@@ -2,6 +2,8 @@
 
 include 'config.php';
 
+//session_start();
+
 echo "<h1>Sign Up</h1>";
 echo "<p>Please fill this form to create an account.</p>";
 
@@ -81,10 +83,8 @@ body{ font: 14px sans-serif; }
 <body>	
 
 <div class="wrapper">
-<h2>Sign Up</h2>
-<p>Please fill this form to create an account.</p>
 
-<form action="signup.php" method="POST">
+<form action="register.php" method="POST">
 	<input type="text" name="username" placeholder="Username"><br>
 	<input type="text" name="email" placeholder="Email"><br>
 	<input type="password" name="pwd" placeholder="Password"><br>
