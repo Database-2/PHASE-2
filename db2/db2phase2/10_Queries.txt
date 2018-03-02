@@ -17,7 +17,7 @@ GROUP BY uid
 ORDER BY COUNT(uid) DESC
 LIMIT 1;
 
-Count the number of posts that contains the keyword “flu”, display the location of <br /> 
+Count the number of posts that contains the keyword “flu”, display the location of 
 the users who have made the posts as well (use “GROUP BY location”). 
 3.
 SELECT COUNT(body), location
