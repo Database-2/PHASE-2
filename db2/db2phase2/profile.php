@@ -43,6 +43,7 @@ if(isset($_SESSION['username'])){
   right:5px;
 }
 
+
 @media only screen and (max-width:800px) {
   /* For tablets: */
   .main {
@@ -72,6 +73,11 @@ if(isset($_SESSION['username'])){
   </form>  
   </div>
 
+<div class="topcorner">
+  <form action="home.php" method="POST">
+    <input type="submit" name="home" value= "Home">
+  </form>  
+  </div>
 
 <div style="background-color:#ffffff;padding:15px;">
   <center>
@@ -86,36 +92,26 @@ if(isset($_SESSION['username'])){
         echo "Welcome, " .$_SESSION['username']. "!";
     ?>
     
-    <div class="menuitem">
+    <!-- <div class="menuitem">
       <form action="profile.php" method="POST">
             <input type="submit" name="profile" value= "My Profile">
       </form>  
-    </div> 
+    </div> -->
 
     <div class="menuitem">Follwers
-    <output name="follower" for= "followers"></output></div>
+    <output name="Follower" for= "followers"></output></div>
     <div class="menuitem">Follwing
-    <output name="following" for= "following"></output></div>
-    <div class="menuitem">Search</div>
+    <output name="Following" for= "following"></output></div>
     <div class="menuitem">Message</div>
   </div>
 
   <div class="main">
     <h2>Post</h2>
-    <p></p>
+     <form action="profile.php" method="POST">
+      <textarea style="resize:none" rows="4" cols="50" maxlength="200" ></textarea><br />
+      <input type="submit" name="post" value= "Post">
+  	  </form>  
   </div>
-
-
-  <div class="right">
-    <h2>What is trending?</h2>
-    <p>The post that has the most number of likes.</p>
-    <h2>Who has the most twitter follwers?</h2>
-     <p>   </p>
-    <h2>Who twits the most in a year?</h2>
-    <p> </p>
-  </div>
-
-</div>
 
 </body>
 </html>
