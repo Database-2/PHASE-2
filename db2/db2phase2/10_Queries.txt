@@ -24,3 +24,19 @@ SELECT COUNT(body), location
 FROM `twitts`, `user`
 WHERE twitts.uid = user.uid AND `body` LIKE 'flu%'
 GROUP BY location;
+
+User input a person’s twitter name, find all the posts made by that person 
+4.
+SELECT body
+FROM `user`,`twitts` 
+WHERE user.uid =  twitts.uid AND username LIKE 'che%' //input username
+GROUP BY body;
+
+User input a year, find the person who twits the most in that year 
+5.
+SELECT username
+FROM `user`,`twitts` 
+WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '2018%' //input year
+GROUP BY twitts.uid
+ORDER BY COUNT(twitts.uid) DESC
+LIMIT 1;
