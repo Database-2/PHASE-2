@@ -12,7 +12,7 @@ Find the person who has the most number of followers
 //update
 SELECT username
 FROM `user`,`follow` 
-WHERE uid = follower_id 
+WHERE uid = following_id 
 GROUP BY uid
 ORDER BY COUNT(uid) DESC
 LIMIT 1;
@@ -22,7 +22,7 @@ the users who have made the posts as well (use “GROUP BY location”).
 3.
 SELECT COUNT(body), location
 FROM `twitts`, `user`
-WHERE twitts.uid = user.uid AND `body` LIKE 'flu%'
+WHERE twitts.uid = user.uid AND `body` LIKE '%flu%'
 GROUP BY location;
 
 User input a person’s twitter name, find all the posts made by that person 
