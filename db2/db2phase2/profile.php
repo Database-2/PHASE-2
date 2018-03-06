@@ -103,7 +103,16 @@ if(isset($_SESSION['username'])){
     <output name="Follower" for= "followers"></output></div>
     <div class="menuitem">Follwing
     <output name="Following" for= "following"></output></div>
-    <div class="menuitem">Message</div>
+    <div class="menuitem">Message
+	  <div>
+	    <form action="inbox.php" method="POST" style='display:inline;'>
+          <input type="submit" name="inbox" value= "Inbox">
+        </form>
+	    <form action="send.php" method="POST" style='display:inline;'>
+          <input type="submit" name="send" value= "Send">
+        </form>
+	  </div>
+	</div>
   </div>
 
   <div class="main">

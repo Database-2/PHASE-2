@@ -88,7 +88,7 @@ if(isset($_SESSION['username'])){
     <?php
         echo "Welcome, " .$_SESSION['username']. "!";
     ?>
-    
+  
     <div class="menuitem">
       <form action="profile.php" method="POST">
             <input type="submit" name="profile" value= "My Profile">
@@ -100,7 +100,16 @@ if(isset($_SESSION['username'])){
     <div class="menuitem">Follwing
     <output name="following" for= "following"></output></div>
     <div class="menuitem">Search</div>
-    <div class="menuitem">Message</div>
+    <div class="menuitem">Message
+	  <div>
+	  <form action="inbox.php" method="POST" style='display:inline;'>
+        <input type="submit" name="inbox" value= "Inbox">
+      </form>
+	  <form action="send.php" method="POST" style='display:inline;'>
+        <input type="submit" name="send" value= "Send">
+      </form>
+	  </div>
+	</div>
   </div>
 
   <div class="main">

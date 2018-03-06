@@ -5,8 +5,10 @@ session_start();
 echo "<h2>Sign In</h2>";
 echo "<p>Please enter your username and password.</p>";
 
-$username = $pwd = $login = "";
+$uid = $username = $pwd = $login = "";
 
+if(isset($_POST['uid'])){
+}
 if(isset($_POST['username'])){
 $username = $_POST['username'];
 }
@@ -32,6 +34,12 @@ if ($login) {
 		}else {
 		//echo "You are logged in!";
 		$_SESSION['username']=$username;
+		$sql = "SELECT user.uid
+               FROM `user` 
+               WHERE user.username = '$username'"; 
+        $result = mysqli_query($conn,$sql);
+		$row = mysqli_fetch_assoc($result);
+		$_SESSION['uid']=$row["uid"];
 		header("Location: home.php");
 
 	}
