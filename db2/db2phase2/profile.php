@@ -3,6 +3,7 @@ include 'config.php';
 session_start();
 
 if(isset($_SESSION['username'])){
+  
   //echo "Welcome, " .$_SESSION['username']. "!";
 }
 ?>
@@ -111,6 +112,11 @@ if(isset($_SESSION['username'])){
       <textarea style="resize:none" rows="4" cols="50" maxlength="200" ></textarea><br />
       <input type="submit" name="post" value= "Post">
   	  </form>  
+    <ul style="list-style-type:none">
+      <li></li>
+      <li>Tea</li>
+      <li>Milk</li>
+    </ul> 
   </div>
 
 </body>
