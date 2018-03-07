@@ -44,3 +44,21 @@ WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '2018%' //input year
 GROUP BY twitts.uid
 ORDER BY COUNT(twitts.uid) DESC
 LIMIT 1;
+
+
+SELECT username, body, post_time
+FROM
+(
+SELECT u2.username,  twitts.body, post_time
+FROM user u1, user u2, follow, twitts
+WHERE u1.uid =1 
+	  AND follower_id = 1
+      AND u2.uid = following_id
+      AND follow.following_id = twitts.uid   
+	UNION
+SELECT username, body, post_time
+FROM user, twitts
+WHERE twitts.uid = user.uid
+	  AND user.uid = 1
+) results
+ORDER By post_time DESC
