@@ -2,10 +2,17 @@
 include 'config.php';
 session_start();
 
-if(isset($_SESSION['username'])){
-  
-  //echo "Welcome, " .$_SESSION['username']. "!";
+// Set up user and ids 
+if(isset($_SESSION['uid'])){
 }
+$user_uid = "";
+if(isset($user_uid)){
+$user_uid = $_SESSION['uid'];
+}
+//get data and time
+$da = date_default_timezone_set("America/New_York");
+$d = date("Y-m-d h:i:sa");
+
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +51,6 @@ if(isset($_SESSION['username'])){
   right:5px;
 }
 
-
 @media only screen and (max-width:800px) {
   /* For tablets: */
   .main {
@@ -58,6 +64,7 @@ if(isset($_SESSION['username'])){
     width: 100%;
   }
 }
+
 @media only screen and (max-width:500px) {
   /* For mobile phones: */
   .menu, .main, .right {
@@ -92,12 +99,6 @@ if(isset($_SESSION['username'])){
     <?php
         echo "Welcome, " .$_SESSION['username']. "!";
     ?>
-    
-    <!-- <div class="menuitem">
-      <form action="profile.php" method="POST">
-            <input type="submit" name="profile" value= "My Profile">
-      </form>  
-    </div> -->
 
     <div class="menuitem">Follwers
     <output name="Follower" for= "followers"></output></div>
@@ -118,15 +119,61 @@ if(isset($_SESSION['username'])){
   <div class="main">
     <h2>Post</h2>
      <form action="profile.php" method="POST">
-      <textarea style="resize:none" rows="4" cols="50" maxlength="200" ></textarea><br />
+      <textarea style="resize:none" rows="4" cols="50" maxlength="200" name="user_post" placeholder = "What's on your mind?" > </textarea><br />
       <input type="submit" name="post" value= "Post">
-  	  </form>  
+  	  </form> 
+ <?php
+
+  $user_post = $post = $user_post_err = "";
+  if(isset($_POST['$user_post'])){
+    $user_post = $_POST['user_post'];
+  }if(isset($_POST['post'])){
+    $post = $_POST['post'];  
+  }if($post) {
+    if (empty($user_post)){
+      $user_post_err = "<p>Please enter something.</p>";
+      echo $user_post_err;
+    }else {
+      $sqla = "INSERT INTO `twitts`(`uid`, `body`, `post_time`)
+              VALUES ('$user_uid',$user_post','$d')";
+      $resulta = mysqli_query($conn,$sqla);
+    }        
+  }
+   echo $user_uid;
+   echo '<br />';
+   echo '<br />';
+   echo $d;
+   echo '<br />';
+
+  $sql ="SELECT username, body, post_time  
+         FROM user, twitts
+         WHERE twitts.uid = user.uid
+               AND user.uid = $user_uid
+         ORDER By post_time DESC";
+
+  $result =$conn->query($sql);
+
+  if($result->num_rows > 0){
+    while ($row = $result->fetch_assoc()) {
+      echo $row["username"];
+      echo " "; 
+      echo $row["post_time"];
+      echo '<br />';
+      echo $row["body"];
+      echo '<br />';
+      echo '<br />';
+     }
+  }else {
+     echo "No result";
+      }
+      
+      ?> 
     <ul style="list-style-type:none">
       <li></li>
       <li>Tea</li>
       <li>Milk</li>
     </ul> 
-  </div>
 
+      </div>
 </body>
 </html>

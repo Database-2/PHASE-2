@@ -2,12 +2,14 @@
 include 'config.php';
 session_start();
 
-if(isset($_SESSION['username'])){
- // $get_id_username = "SELECT uid FROM `user` WHERE `username` = $_SESSION[$username]";
- // echo $get_id_username;
-//echo $_SESSION['username'];
-
+// Set up user and ids 
+if(isset($_SESSION['uid'])){
 }
+$user_uid = "";
+if(isset($user_uid)){
+$user_uid = $_SESSION['uid'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -114,7 +116,40 @@ if(isset($_SESSION['username'])){
 
   <div class="main">
     <h2>Post</h2>
-    <p></p>
+        <?php
+      $sql ="SELECT username, body, post_time
+             FROM
+             (SELECT u2.username,  twitts.body, post_time
+              FROM user u1, user u2, follow, twitts
+              WHERE u1.uid = $user_uid 
+                    AND follower_id = $user_uid
+                    AND u2.uid = following_id
+                    AND follow.following_id = twitts.uid   
+                        UNION
+              SELECT username, body, post_time
+              FROM user, twitts
+              WHERE twitts.uid = user.uid
+                    AND user.uid = $user_uid
+              ) results
+            ORDER By post_time DESC";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+        while ($row = $result->fetch_assoc()) {
+        echo $row["username"];
+        echo " "; 
+        echo $row["post_time"];
+        echo '<br />';
+        echo $row["body"];
+        echo '<br />';
+        echo '<br />';
+        }
+      }else {
+          echo "No result";
+        }
+      
+      ?>
   </div>
 
 <!--trending first query -->
@@ -123,17 +158,22 @@ if(isset($_SESSION['username'])){
     <h1>What is trending?</h1>
     <h2>The post that has the most number of likes.</h2>
     <?php
-      $sql = "SELECT body 
-             FROM twitts, thumb   
-             WHERE twitts.tid = thumb.tid 
-             GROUP BY like_id
-             ORDER BY COUNT(like_id) DESC
-             LIMIT 1";
+      $sql = "SELECT body, COUNT(thumb.tid) 
+              FROM twitts, thumb
+              WHERE twitts.tid = thumb.tid
+              GROUP BY body
+              Having count(thumb.tid) =
+              (SELECT MAX(thumbcount) FROM
+              (SELECT body, COUNT(thumb.tid) as thumbcount
+               FROM twitts, thumb
+               WHERE twitts.tid = thumb.tid 
+               GROUP BY body) t1)";
       $result =$conn->query($sql);
 
      if($result->num_rows > 0){
       while ($row = $result->fetch_assoc()) {
         echo $row["body"];
+          echo '<br />';
         # code...
       }
      }
