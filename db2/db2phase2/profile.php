@@ -118,33 +118,28 @@ $d = date("Y-m-d h:i:sa");
 
   <div class="main">
     <h2>Post</h2>
-     <form action="profile.php" method="POST">
-      <textarea style="resize:none" rows="4" cols="50" maxlength="200" name="user_post" placeholder = "What's on your mind?" > </textarea><br />
-      <input type="submit" name="post" value= "Post">
+     <form action="profile.php" method="POST" >
+      <textarea name="userpost" style="resize:none" rows="4" cols="50" maxlength="200" placeholder ="What's on your mind?" > </textarea><br />
+      <input type="submit" name="proses" value= "Post">
   	  </form> 
  <?php
 
-  $user_post = $post = $user_post_err = "";
-  if(isset($_POST['$user_post'])){
-    $user_post = $_POST['user_post'];
-  }if(isset($_POST['post'])){
-    $post = $_POST['post'];  
-  }if($post) {
-    if (empty($user_post)){
-      $user_post_err = "<p>Please enter something.</p>";
-      echo $user_post_err;
-    }else {
+// create user's post
+  $user_post = $proses = $user_post_err = "";
+  if (isset($_POST['proses'])){
+      $user_post = nl2br($_POST['userpost']); 
+   if (!strlen(trim($user_post))){
+        $user_post_err = "<p>Please enter something.</p>";
+        echo $user_post_err;
+   }else {
+
       $sqla = "INSERT INTO `twitts`(`uid`, `body`, `post_time`)
-              VALUES ('$user_uid',$user_post','$d')";
+              VALUES ('$user_uid','$user_post','$d')";
       $resulta = mysqli_query($conn,$sqla);
     }        
-  }
-   echo $user_uid;
-   echo '<br />';
-   echo '<br />';
-   echo $d;
-   echo '<br />';
+ }
 
+// display user's post only
   $sql ="SELECT username, body, post_time  
          FROM user, twitts
          WHERE twitts.uid = user.uid
@@ -154,25 +149,23 @@ $d = date("Y-m-d h:i:sa");
   $result =$conn->query($sql);
 
   if($result->num_rows > 0){
+
     while ($row = $result->fetch_assoc()) {
-      echo $row["username"];
-      echo " "; 
-      echo $row["post_time"];
-      echo '<br />';
-      echo $row["body"];
-      echo '<br />';
-      echo '<br />';
+      $current_username = $row["username"];
+      $date = $row["post_time"];
+      $body = $row["body"];
+      $likes = "3";
+      $dislike = "2";
+      echo "<ul style='list-style-type:none'>";
+      echo "<li>".$current_username." ".$date. " <input type='submit' name='del' value= 'delete'> </li>";
+      echo "<li>".$body."</li>";
+      echo "</ul>";
      }
   }else {
      echo "No result";
       }
       
       ?> 
-    <ul style="list-style-type:none">
-      <li></li>
-      <li>Tea</li>
-      <li>Milk</li>
-    </ul> 
 
       </div>
 </body>
