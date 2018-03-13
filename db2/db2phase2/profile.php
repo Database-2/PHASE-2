@@ -3,7 +3,9 @@ include 'config.php';
 session_start();
 
 // Set up user and ids 
-if(isset($_SESSION['uid'])){
+if(!isset($_SESSION['uid'])){
+  header("Location: login.php");
+  exit();
 }
 $user_uid = "";
 if(isset($user_uid)){
@@ -149,6 +151,8 @@ $d = date("Y-m-d h:i:sa");
   $result =$conn->query($sql);
 
   if($result->num_rows > 0){
+    $num_like ="Likes";
+    $num_dislike = "Dislike";
 
     while ($row = $result->fetch_assoc()) {
       $current_username = $row["username"];
@@ -159,6 +163,7 @@ $d = date("Y-m-d h:i:sa");
       echo "<ul style='list-style-type:none'>";
       echo "<li>".$current_username." ".$date. " <input type='submit' name='del' value= 'delete'> </li>";
       echo "<li>".$body."</li>";
+      echo "<li>" .$num_like. " " .$likes. " " .$num_dislike. " " .$dislike. "</li>";
       echo "</ul>";
      }
   }else {

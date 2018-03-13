@@ -3,7 +3,9 @@ include 'config.php';
 session_start();
 
 // Set up user and ids 
-if(isset($_SESSION['uid'])){
+if(!isset($_SESSION['uid'])){
+  header("Location: login.php");
+  exit();
 }
 $user_uid = "";
 if(isset($user_uid)){
@@ -67,6 +69,7 @@ $user_uid = $_SESSION['uid'];
     width: 100%;
   }
 }
+
 </style>
 </head>
 <body style="font-family:Verdana;">
@@ -115,6 +118,39 @@ $user_uid = $_SESSION['uid'];
   </div>
 
   <div class="main">
+    <form action="home.php" method="POST">
+    <input type="text" name ="user_f" placeholder= "Search for user...." />
+    <input type="submit" name ="search_user" value="Seach"/>
+    </form>
+            
+<?php
+ $search_u = $user_name_u ="";
+ if(isset($_POST['user_f'])){
+   $user_name_u = $_POST['user_f']; 
+ }if(isset($_POST['search_user'])){
+ $search_u = $_POST['search_user'];
+ } 
+    if ($search_u) {
+      $sql = "SELECT username
+              FROM `user` 
+              WHERE username LIKE '$user_name_u%' 
+              GROUP BY username";
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+      $current_username_f = $row["username"];
+      echo "<ul style='list-style-type:none'>";
+      echo "<li>".$current_username_f. "  <input type='submit' name='unfollow' value= 'unfollow'>  <input type='submit' name='follow' value= 'follow'>  </li>";
+      echo "</ul>";
+        
+      }
+     } else {
+      echo "No result";
+     }
+   }
+           
+    ?> 
     <h2>Post</h2>
         <?php
       $sql ="SELECT username, body, post_time

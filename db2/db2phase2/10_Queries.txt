@@ -66,7 +66,7 @@ Having count(twitts.uid) =
 (SELECT username, COUNT(twitts.uid) as thumbcount
 FROM `user`,`twitts` 
 WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '2018%'
-GROUP BY twitts.uid) t1);
+GROUP BY twitts.uid) t1); 
 
 /////////////////////////////////////////////////////////////////
 SELECT username, body, post_time
