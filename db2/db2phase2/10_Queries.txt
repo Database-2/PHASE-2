@@ -93,3 +93,14 @@ WHERE twitts.uid = user.uid
 	   AND twitts.tid = comment.tid
        AND user.uid = 22
 ORDER By post_time DESC
+
+////////////////////////////////////////////////////////////////////////////
+count # of followers
+SELECT COUNT(*) 
+FROM `follow`,user 
+WHERE 1 = uid AND following_id = uid;
+
+count # of following
+SELECT COUNT(*) 
+FROM `follow`,user 
+WHERE 1 = uid AND follower_id = uid
