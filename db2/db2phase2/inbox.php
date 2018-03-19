@@ -2,16 +2,18 @@
 include 'config.php';
 session_start();
 
+if(!isset($_SESSION['uid'])){
+  header("Location: login.php");
+  exit();
+}
 if(isset($_SESSION['username'])){
 }
-
-if(isset($_SESSION['uid'])){
-}
+$user_uid = "";
 if(isset($user_uid)){
 $user_uid = $_SESSION['uid'];
 }
-
 ?>
+ 
 
 <!DOCTYPE html>
 <html>
@@ -120,14 +122,25 @@ $user_uid = $_SESSION['uid'];
 	</form>
 	
 	<?php
-	  $sql = "SELECT uid, username
-              FROM `user`"; 
-      $result = mysqli_query($conn,$sql);
+  $sql ="SELECT DISTINCT username, body, send_time, message_id  
+         FROM user, message
+         WHERE user.uid = sender_id
+			   AND receiver_id = $user_uid
+         ORDER By send_time DESC";
+
+  $result =$conn->query($sql);
 	  while ($row = $result->fetch_assoc()) {
-        unset($uid, $username);
-        $uid = $row['uid'];
         $username = $row['username']; 
-        echo '<option value="'.$uid.'">'.$username.'</option>';
+        $current_username = $row["username"];
+        $date = $row["send_time"];
+        $body = $row["body"];
+		$list_id = $row["message_id"];
+        echo "<ul style='list-style-type:none'>";
+        echo "<li>".$current_username." ".$date. "</li>";
+        echo "<li>".$body."</li>";
+		echo "<li><a href='delete_message.php?id=".$row['message_id']."'>
+			   Delete</a> <a href='reply_message.php?id=".$row['username']."'>Reply</a></li>";
+        echo "</ul>";		
       }
 
 

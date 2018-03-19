@@ -2,6 +2,13 @@
 include 'config.php';
 session_start();
 
+$id = $_GET['id'];
+
+//if(!isset($id)){
+//  header("Location: inbox.php");
+//  exit();
+//}
+
 if(!isset($_SESSION['uid'])){
   header("Location: login.php");
   exit();
@@ -104,7 +111,7 @@ if(isset($receiver_uid)){
 
 <div style="background-color:#ffffff;padding:15px;">
   <center>
-  <h1>Send Message</h1>
+  <h1>Reply to Message</h1>
   </center>
 </div>
 
@@ -126,16 +133,22 @@ if(isset($receiver_uid)){
     <div class="menuitem">Follwing
     <output name="Following" for= "following"></output></div>
     <div class="menuitem">Message
-	  <form action="inbox.php" method="POST" >
-        <input type="submit" name="inbox" value= "Inbox">
-      </form></div>
+	  <div>
+	    <form action="inbox.php" method="POST" style='display:inline;'>
+          <input type="submit" name="inbox" value= "Inbox">
+        </form>
+	    <form action="send.php" method="POST" style='display:inline;'>
+          <input type="submit" name="send" value= "Send">
+        </form>
+	  </div>
+	</div>
   </div>
 
   <div class="main">
-    <form action="send.php" method="POST">
+    <form action="reply_message.php" method="POST">
       <div class="block">
         <label>To:<label></br>
-	    <input type="text" name ="user_rec" />
+		<?php echo $id; ?>
       </div>
 	  <div class="block">
         </br><label>Mesage:<label></br>
@@ -146,10 +159,19 @@ if(isset($receiver_uid)){
 	
 	<?php
       $search = $user_name ="";
-
-      if(isset($_POST['user_rec'])){
-        $user_name = $_POST['user_rec'];
-      }
+	  
+	    $sql = "SELECT user.uid
+                FROM `user` 
+                WHERE user.username = '$id'"; 
+        $result = mysqli_query($conn,$sql);
+		$row = mysqli_fetch_assoc($result); 
+		echo $row["uid"];
+	  
+	if(isset($user_name)){
+      $user_name = $id;
+	  echo $user_name;
+	}
+	  
       if(isset($_POST['send_mes'])){
         $search = $_POST['send_mes'];
       }
@@ -157,8 +179,9 @@ if(isset($receiver_uid)){
       if ($search) {
         $sql = "SELECT user.uid
                 FROM `user` 
-                WHERE user.username = '$user_name'"; 
+                WHERE user.username = '$id'"; 
         $result = mysqli_query($conn,$sql);
+		
 		
       if($result->num_rows > 0){
 		$row = mysqli_fetch_assoc($result);  
@@ -168,6 +191,9 @@ if(isset($receiver_uid)){
 	    $sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
 		VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
 		$result = mysqli_query($conn,$sql);
+		//mysqli_close($conn);
+		//header('Location: inbox.php');
+		//exit;
       } else {
           echo "No result";
         }
