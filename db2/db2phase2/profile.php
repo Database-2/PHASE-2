@@ -182,20 +182,35 @@ $d = date("Y-m-d h:i:sa");
 
   $result =$conn->query($sql);
 
+
   if($result->num_rows > 0){
     $num_like ="Likes";
-    $num_dislike = "Dislike";
+    $nnndislike = "Dislike";
 
     while ($row = $result->fetch_assoc()) {
       $current_username = $row["username"];
       $date = $row["post_time"];
       $body = $row["body"];
-      $likes = "3";
-      $dislike = "2";
+      $tidl = $row["tid"];
       echo "<ul style='list-style-type:none'>";
       echo "<li>".$current_username." ".$date. " <a href='post_del.php?del=$row[tid]'>delete</a></li>";
       echo "<li>".$body."</li>";
-      echo "<li>" .$num_like. " " .$likes. " " .$num_dislike. " " .$dislike. "</li>";
+      
+      // likes
+      $sqll = "SELECT COUNT(*) FROM `thumb` WHERE  tid= $tidl";
+      $resultl =$conn->query($sqll);
+
+      //dislike
+      $sqldisl = "SELECT COUNT(*) FROM `dislike` WHERE  tid= $tidl";
+      $resultdisl =$conn->query($sqldisl);
+
+      if(($resultl->num_rows >= 0) &&  ($resultdisl->num_rows >= 0) ){
+        while (($rowl = $resultl->fetch_assoc()) && ($rowdisk = $resultdisl->fetch_assoc()) ) {
+        $likes = $rowl["COUNT(*)"];
+        $dislike = $rowdisk["COUNT(*)"];
+      echo "<li> <a href='user_like.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
+      }
+      }
       echo "</ul>";
      }
   }else {

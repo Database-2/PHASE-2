@@ -207,16 +207,16 @@ $d = date("Y-m-d h:i:sa");
           }        
         }
 
-      $sql ="SELECT username, body, post_time
+      $sql ="SELECT username, body, post_time, tid
              FROM
-             (SELECT u2.username,  twitts.body, post_time
+             (SELECT u2.username,  twitts.body, post_time, twitts.tid
               FROM user u1, user u2, follow, twitts
               WHERE u1.uid = $user_uid 
                     AND follower_id = $user_uid
                     AND u2.uid = following_id
                     AND follow.following_id = twitts.uid   
                         UNION
-              SELECT username, body, post_time
+              SELECT username, body, post_time, tid
               FROM user, twitts
               WHERE twitts.uid = user.uid
                     AND user.uid = $user_uid
@@ -227,12 +227,29 @@ $d = date("Y-m-d h:i:sa");
 
      if($result->num_rows > 0){
         while ($row = $result->fetch_assoc()) {
+          $tidl = $row["tid"];
         echo $row["username"];
         echo " "; 
         echo $row["post_time"];
         echo '<br />';
         echo $row["body"];
         echo '<br />';
+      
+      // likes
+      $sqlli = "SELECT COUNT(*) FROM `thumb` WHERE  tid= $tidl";
+      $resultli =$conn->query($sqlli);
+
+      //dislike
+      $sqldisl = "SELECT COUNT(*) FROM `dislike` WHERE  tid= $tidl";
+      $resultdisl =$conn->query($sqldisl);
+
+      if(($resultli->num_rows >= 0) &&  ($resultdisl->num_rows >= 0) ){
+        while (($rowli = $resultli->fetch_assoc()) && ($rowdisk = $resultdisl->fetch_assoc()) ) {
+        $likes = $rowli["COUNT(*)"];
+        $dislike = $rowdisk["COUNT(*)"];
+      echo "<a href='user_like.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "";
+      }
+      }
         echo '<br />';
         }
       }else {
