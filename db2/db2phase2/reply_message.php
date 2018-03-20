@@ -15,19 +15,6 @@ if(isset($id)){
   $id = $_SESSION['receiver'];
 }
 
-if(isset($_GET['mid'])){
-  $mid = $_GET['mid'];
-}
-if(!isset($_GET['mid'])){
-  //header("Location: inbox.php");
-  //exit();
-  $mid = $_SESSION['message_id'];  
-}
-if(isset($id)){
-  $_SESSION['message_id'] = $mid;
-  $mid = $_SESSION['message_id'];
-}
-
 //if(!isset($id)){
 //  header("Location: inbox.php");
 //  exit();
@@ -211,11 +198,7 @@ if(isset($receiver_uid)){
 	    $sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
 		VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
 		$result = mysqli_query($conn,$sql);
-		
-		$sql = "DELETE FROM message WHERE message_id = $mid"; 
-        $result = mysqli_query($conn,$sql);
-		
-		$_SESSION['message_id'] = "";
+
 		mysqli_close($conn);
 		header('Location: inbox.php');
 		exit;
