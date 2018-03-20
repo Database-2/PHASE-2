@@ -122,9 +122,41 @@ if(isset($receiver_uid)){
     </div> -->
 
     <div class="menuitem">Follwers
-    <output name="Follower" for= "followers"></output></div>
+    <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,user 
+              WHERE $user_uid = uid AND following_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+     </div>
     <div class="menuitem">Follwing
-    <output name="Following" for= "following"></output></div>
+          <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,user 
+              WHERE $user_uid = uid AND follower_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+    </div>
     <div class="menuitem">Message
 	  <form action="inbox.php" method="POST" >
         <input type="submit" name="inbox" value= "Inbox">
