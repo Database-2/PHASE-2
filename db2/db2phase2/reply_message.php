@@ -2,7 +2,31 @@
 include 'config.php';
 session_start();
 
-$id = $_GET['id'];
+if(isset($_GET['id'])){
+  $id = $_GET['id'];
+}
+if(!isset($_GET['id'])){
+  //header("Location: inbox.php");
+  //exit();
+  $id = $_SESSION['receiver'];  
+}
+if(isset($id)){
+  $_SESSION['receiver'] = $id;
+  $id = $_SESSION['receiver'];
+}
+
+if(isset($_GET['mid'])){
+  $mid = $_GET['mid'];
+}
+if(!isset($_GET['mid'])){
+  //header("Location: inbox.php");
+  //exit();
+  $mid = $_SESSION['message_id'];  
+}
+if(isset($id)){
+  $_SESSION['message_id'] = $mid;
+  $mid = $_SESSION['message_id'];
+}
 
 //if(!isset($id)){
 //  header("Location: inbox.php");
@@ -165,11 +189,9 @@ if(isset($receiver_uid)){
                 WHERE user.username = '$id'"; 
         $result = mysqli_query($conn,$sql);
 		$row = mysqli_fetch_assoc($result); 
-		echo $row["uid"];
 	  
 	if(isset($user_name)){
       $user_name = $id;
-	  echo $user_name;
 	}
 	  
       if(isset($_POST['send_mes'])){
@@ -182,8 +204,6 @@ if(isset($receiver_uid)){
                 WHERE user.username = '$id'"; 
         $result = mysqli_query($conn,$sql);
 		
-		
-      if($result->num_rows > 0){
 		$row = mysqli_fetch_assoc($result);  
 		$receiver_uid = $row["uid"];
 		$user_mes = $_POST['user_mes'];
@@ -191,12 +211,15 @@ if(isset($receiver_uid)){
 	    $sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
 		VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
 		$result = mysqli_query($conn,$sql);
-		//mysqli_close($conn);
-		//header('Location: inbox.php');
-		//exit;
-      } else {
-          echo "No result";
-        }
+		
+		$sql = "DELETE FROM message WHERE message_id = $mid"; 
+        $result = mysqli_query($conn,$sql);
+		
+		$_SESSION['message_id'] = "";
+		mysqli_close($conn);
+		header('Location: inbox.php');
+		exit;
+
       } 
     ?> 
 	

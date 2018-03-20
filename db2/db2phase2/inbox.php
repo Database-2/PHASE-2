@@ -139,7 +139,7 @@ $user_uid = $_SESSION['uid'];
         echo "<li>".$current_username." ".$date. "</li>";
         echo "<li>".$body."</li>";
 		echo "<li><a href='delete_message.php?id=".$row['message_id']."'>
-			   Delete</a> <a href='reply_message.php?id=".$row['username']."'>Reply</a></li>";
+			   Delete</a> <a href='reply_message.php?id=".$row['username']."&amp;mid=".$row['message_id']."'>Reply</a></li>";
         echo "</ul>";		
       }
 
