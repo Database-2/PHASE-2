@@ -173,3 +173,30 @@ SELECT COUNT(*)
 FROM `follow`,user 
 WHERE 1 = uid AND follower_id = uid
 ////////////////////////////////////////////////////////////////
+
+
+
+
+
+// display
+SELECT twitts.body, comment.body
+FROM `comment`, `twitts`, `user` 
+WHERE twitts.tid = comment.tid AND twitts.tid = tid AND twitts.uid = 22
+GROUP BY twitts.body
+
+//home update
+SELECT username, body, post_time, tid
+             FROM
+             (SELECT u2.username,  twitts.body, post_time, twitts.tid
+              FROM user u1, user u2, follow, twitts
+              WHERE u1.uid = 22 
+                    AND follower_id = 22
+                    AND u2.uid = following_id
+                    AND follow.following_id = twitts.uid   
+                        UNION
+              SELECT username, body, post_time, tid
+              FROM user, twitts
+              WHERE twitts.uid = user.uid
+                    AND user.uid = 22
+              ) results
+            ORDER By post_time DESC
