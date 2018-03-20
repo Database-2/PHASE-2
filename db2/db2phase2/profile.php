@@ -208,7 +208,7 @@ $d = date("Y-m-d h:i:sa");
         while (($rowl = $resultl->fetch_assoc()) && ($rowdisk = $resultdisl->fetch_assoc()) ) {
         $likes = $rowl["COUNT(*)"];
         $dislike = $rowdisk["COUNT(*)"];
-      echo "<li> <a href='user_like.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
+      echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
       }
       }
       echo "</ul>";

@@ -25,27 +25,27 @@ $user_uid = $_SESSION['uid'];
 	//
 	//
 	$get_num_dislike = "SELECT `count(*)` FROM `dislike` WHERE `uid` = $user_uid AND `tid` = $lik_tid";
-	$check_for_dislike = mysqli_query($conn,$get_num_dislike);
+	$check_for_dislike = mysqli_query($conn,$get_num_like);
 
-		if (mysqli_num_rows($check_for_like) == 1) {
+		if (mysqli_num_rows($check_for_like) > 0) {
 			echo "<meta http-equiv='refresh' content='0;url=home.php'>";
-		}elseif (mysqli_num_rows($check_for_dislike) > 0) {
+		}elseif (condition) {
 
-		$sqldis = "	DELETE FROM `dislike` WHERE `uid` = $user_uid AND `tid` = lik_tid";
+		$sqldis = "	DELETE FROM `dislike` WHERE `uid` = $user_uid AND `tid` = lik_tid;"
 		$resdis = mysqli_query($conn,$sqldis) or die("Failed".mysqli_error());
 
 		$sqlil= "INSERT INTO `thumb`(`uid`, `tid`) 
 				VALUES ('$user_uid','$lik_tid')";
 		$resil= mysqli_query($conn,$sqlil) or die("Failed".mysqli_error());
-		echo "<meta http-equiv='refresh' content='0;url=home.php'>";
+		echo "<meta http-equiv='refresh' content='0;url=profile.php'>";
 			
 		}else {
 
-		$sqlili= "INSERT INTO `thumb`(`uid`, `tid`) 
+		$sqlil= "INSERT INTO `thumb`(`uid`, `tid`) 
 				VALUES ('$user_uid','$lik_tid')";
-		$resili= mysqli_query($conn,$sqlili) or die("Failed".mysqli_error());
-		echo "<meta http-equiv='refresh' content='0;url=home.php'>";
-		}
+		$resil= mysqli_query($conn,$sqlil) or die("Failed".mysqli_error());
+		echo "<meta http-equiv='refresh' content='0;url=profile.php'>";
+	}
 	}
 
 	
