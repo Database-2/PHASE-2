@@ -184,8 +184,6 @@ $d = date("Y-m-d h:i:sa");
 
 
   if($result->num_rows > 0){
-    $num_like ="Likes";
-    $nnndislike = "Dislike";
 
     while ($row = $result->fetch_assoc()) {
       $current_username = $row["username"];
@@ -196,6 +194,13 @@ $d = date("Y-m-d h:i:sa");
       echo "<li>".$current_username." ".$date. " <a href='post_del.php?del=$row[tid]'>delete</a></li>";
       echo "<li>".$body."</li>";
       
+
+      //comment 
+      $sqlcomm = "SELECT `username`, comment.body, `comment_time` 
+                  FROM `user`,`comment` 
+                  WHERE user.uid = comment.uid AND  comment.tid = $tidl";
+      $resultcomm =$conn->query($sqlcomm);  
+
       // likes
       $sqll = "SELECT COUNT(*) FROM `thumb` WHERE  tid= $tidl";
       $resultl =$conn->query($sqll);
@@ -204,13 +209,40 @@ $d = date("Y-m-d h:i:sa");
       $sqldisl = "SELECT COUNT(*) FROM `dislike` WHERE  tid= $tidl";
       $resultdisl =$conn->query($sqldisl);
 
-      if(($resultl->num_rows >= 0) &&  ($resultdisl->num_rows >= 0) ){
-        while (($rowl = $resultl->fetch_assoc()) && ($rowdisk = $resultdisl->fetch_assoc()) ) {
+        if(($resultl->num_rows >= 0) &&  ($resultdisl->num_rows >= 0 )) {
+        while (($rowl = $resultl->fetch_assoc()) && ($rowdisk = $resultdisl->fetch_assoc())){
+        
+        //numbers of like
         $likes = $rowl["COUNT(*)"];
+        
+        //numbers of dislike
         $dislike = $rowdisk["COUNT(*)"];
-      echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
+        echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike_profile.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
+        //echo "<li>" .$user_comm. " " .$date_comm.  " <a href='user_comment_profile.php?del=$row[tid]'>Delete</a> </li>";
+        //echo "<li>" .$comm_body. "</li>";
+        //echo "</ul>";
+        }
+      
+        } if($resultcomm->num_rows > 0){
+        while (($rowcomm = $resultcomm->fetch_assoc())){
+        //numbers of like
+        $likes = $rowl["COUNT(*)"];
+        
+        //numbers of dislike
+        $dislike = $rowdisk["COUNT(*)"];
+
+        //display comments
+        $user_comm = $rowcomm["username"];
+        $date_comm = $rowcomm["comment_time"];
+        $comm_body = $rowcomm["body"];
+
+        //echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike_profile.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
+        echo "<li>" .$user_comm. " " .$date_comm.  " <a href='user_comment_profile.php?del=$row[tid]'>Delete</a> </li>";
+        echo "<li>" .$comm_body. "</li>";
+        //echo "</ul>";
       }
       }
+      //}
       echo "</ul>";
      }
   }else {
