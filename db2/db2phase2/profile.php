@@ -103,9 +103,41 @@ $d = date("Y-m-d h:i:sa");
     ?>
 
     <div class="menuitem">Follwers
-    <output name="Follower" for= "followers"></output></div>
+    <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,`user` 
+              WHERE $user_uid = uid AND following_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+     </div>
     <div class="menuitem">Follwing
-    <output name="Following" for= "following"></output></div>
+          <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,user 
+              WHERE $user_uid = uid AND follower_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+    </div>
     <div class="menuitem">Message
 	  <div>
 	    <form action="inbox.php" method="POST" style='display:inline;'>
@@ -142,7 +174,7 @@ $d = date("Y-m-d h:i:sa");
  }
 
 // display user's post only
-  $sql ="SELECT username, body, post_time  
+  $sql ="SELECT username, body, post_time,tid  
          FROM user, twitts
          WHERE twitts.uid = user.uid
                AND user.uid = $user_uid
@@ -161,7 +193,7 @@ $d = date("Y-m-d h:i:sa");
       $likes = "3";
       $dislike = "2";
       echo "<ul style='list-style-type:none'>";
-      echo "<li>".$current_username." ".$date. " <input type='submit' name='del' value= 'delete'> </li>";
+      echo "<li>".$current_username." ".$date. " <a href='post_del.php?del=$row[tid]'>delete</a></li>";
       echo "<li>".$body."</li>";
       echo "<li>" .$num_like. " " .$likes. " " .$num_dislike. " " .$dislike. "</li>";
       echo "</ul>";

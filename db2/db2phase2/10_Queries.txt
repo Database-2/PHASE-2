@@ -1,5 +1,6 @@
-﻿Find the post that has the most number of likes 
-1.
+﻿1.
+Find the post that has the most number of likes 
+
 SELECT body, COUNT(thumb.tid) 
 FROM twitts, thumb
 where twitts.tid = thumb.tid
@@ -11,62 +12,109 @@ FROM twitts, thumb
 WHERE twitts.tid = thumb.tid 
 GROUP BY body) t1)
 
-Find the person who has the most number of followers
 2.
-//update
-SELECT username
-FROM `user`,`follow` 
-WHERE uid = following_id 
-GROUP BY uid
-ORDER BY COUNT(uid) DESC
-LIMIT 1;
-
+Find the person who has the most number of followers
 
 SELECT  username, COUNT(follower_id) 
 FROM `user`,`follow` 
 where uid = following_id 
 GROUP BY uid
 Having count(uid) =
-(SELECT MAX(thumbcount) from
-(SELECT username, COUNT(following_id) as thumbcount
+(SELECT MAX(followercount) from
+(SELECT username, COUNT(following_id) as followercount
 FROM user, follow
 WHERE uid = following_id 
 GROUP BY uid) t1)
 
+3.
 Count the number of posts that contains the keyword “flu”, display the location of 
 the users who have made the posts as well (use “GROUP BY location”). 
-3.
+
 SELECT COUNT(body), location
 FROM `twitts`, `user`
 WHERE twitts.uid = user.uid AND `body` LIKE '%flu%'
 GROUP BY location;
 
-User input a person’s twitter name, find all the posts made by that person 
 4.
+User input a person’s twitter name, find all the posts made by that person 
+
 SELECT body
 FROM `user`,`twitts` 
-WHERE user.uid =  twitts.uid AND username LIKE 'che%' //input username
+WHERE user.uid =  twitts.uid AND username LIKE '$user_name%'
 GROUP BY body;
 
-User input a year, find the person who twits the most in that year 
 5.
-SELECT username
-FROM `user`,`twitts` 
-WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '2018%' //input year
-GROUP BY twitts.uid
-ORDER BY COUNT(twitts.uid) DESC
-LIMIT 1;
+User input a year, find the person who twits the most in that year 
 
-SELECT  username, COUNT(twitts.uid) 
+SELECT username, COUNT(twitts.uid)
 FROM `user`,`twitts` 
-WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '2018%'
+WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '2018%' 
 GROUP BY twitts.uid
-Having count(twitts.uid) =
-(SELECT MAX(thumbcount) from
-(SELECT username, COUNT(twitts.uid) as thumbcount
-FROM `user`,`twitts` 
-WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '2018%'
-GROUP BY twitts.uid) t1); 
+HAVING COUNT(twitts.uid) = (SELECT MAX(twittscount) from
+(SELECT username, COUNT(twitts.uid) as twittscount
+FROM twitts, user
+WHERE twitts.uid = user.uid 
+GROUP BY twitts.uid) t1)
+////////////////////////////////////////////////////////////////
+login
+$sql = "SELECT * FROM user WHERE username = '$username' AND password = '$pwd'";
+$result = mysqli_query($conn,$sql); 
+if(!$row = mysqli_fetch_assoc($result)){
+echo "You username or password in incorrect";
+}else {
+//echo "You are logged in!";
+$_SESSION['username']=$username;
+$sql = "SELECT user.uid
+        FROM `user` 
+        WHERE user.username = '$username'"; 
+$result = mysqli_query($conn,$sql);
+$row = mysqli_fetch_assoc($result);
+$_SESSION['uid']=$row["uid"];
+header("Location: home.php");
+////////////////////////////////////////////////////////////////
+7.
+After log in, user posts a new twit 
+$sqla = "INSERT INTO `twitts`(`uid`, `body`, `post_time`)
+         VALUES ('$user_uid','$user_post','$d')";
+$resulta = mysqli_query($conn,$sqla);
+
+8.
+After log in, user follows/unfollows another user 
+
+follow
+//check for duplicates
+
+//get data and time
+$da = date_default_timezone_set("America/New_York");
+$d = date("Y-m-d h:i:sa");
+
+$get_num_username = "SELECT `following_id` FROM `follow` WHERE follower_id = $user_uid AND `following_id` = $id";
+$check_for_username = mysqli_query($conn,$get_num_username);
+if (mysqli_num_rows($check_for_username) > 0) {
+	echo "<meta http-equiv='refresh' content='0;url=home.php'>";
+}else {
+	$sql= "INSERT INTO `follow`(`follower_id`, `following_id`, `follow_time`) 
+				VALUES ('$user_uid','$id','$d')";
+		$res= mysqli_query($conn,$sql) or die("Failed".mysqli_error());
+
+unfollow
+$sql= "DELETE FROM `follow` WHERE`follower_id` = '$user_uid' AND `following_id` = '$id'";
+
+9.
+After log in, user adds comment to a post 
+
+10.
+After log in, user deletes a particular comment to a post he/she has created 
+
+delete post or "twitt"
+$sql= "DELETE FROM twitts WHERE tid='$id'";
+$res= mysqli_query($conn,$sql) or die("Failed".mysqli_error());
+
+delete comment
+
+
+
+
 
 /////////////////////////////////////////////////////////////////
 SELECT username, body, post_time
@@ -94,13 +142,34 @@ WHERE twitts.uid = user.uid
        AND user.uid = 22
 ORDER By post_time DESC
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////check for duplicates
+$get_num_username = "SELECT * FROM `user` WHERE `username` = '$username' ";
+$check_for_username = mysqli_query($conn,$get_num_username);
+$get_num_email = "SELECT * FROM `user` WHERE `email` = '$email' ";
+$check_for_email = mysqli_query($conn,$get_num_email);
+
+if (mysqli_num_rows($check_for_username) > 0) {
+	$username_err2 = "This username is already taken.";
+	echo $username_err2;
+}elseif (mysqli_num_rows($check_for_email) > 0) {
+   		$email_err = "This account is already exists.";
+		echo $email_err;
+}else {
+		$sql = "INSERT INTO `user`(`username`, `password`, `email`, `location`, `regis_date`)
+		VALUES ('$username','$pwd','$email','$loc','$d')";
+		$result = mysqli_query($conn,$sql);
+		
+	header("Location: login.php");
+	}
+	
+////////////////////////////////////////////////////////////////
 count # of followers
 SELECT COUNT(*) 
 FROM `follow`,user 
 WHERE 1 = uid AND following_id = uid;
-
+////////////////////////////////////////////////////////////////
 count # of following
 SELECT COUNT(*) 
 FROM `follow`,user 
 WHERE 1 = uid AND follower_id = uid
+////////////////////////////////////////////////////////////////

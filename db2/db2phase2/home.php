@@ -11,6 +11,9 @@ $user_uid = "";
 if(isset($user_uid)){
 $user_uid = $_SESSION['uid'];
 }
+//get data and time
+$da = date_default_timezone_set("America/New_York");
+$d = date("Y-m-d h:i:sa");
 
 ?>
 
@@ -101,10 +104,41 @@ $user_uid = $_SESSION['uid'];
     </div> 
 
     <div class="menuitem">Follwers
-    <output name="follower" for= "followers"></output></div>
+    <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,user 
+              WHERE $user_uid = uid AND following_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+     </div>
     <div class="menuitem">Follwing
-    <output name="following" for= "following"></output></div>
-    <div class="menuitem">Search</div>
+          <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,user 
+              WHERE $user_uid = uid AND follower_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+    </div>
     <div class="menuitem">Message
 	  <div>
 	  <form action="inbox.php" method="POST" style='display:inline;'>
@@ -131,20 +165,21 @@ $user_uid = $_SESSION['uid'];
  $search_u = $_POST['search_user'];
  } 
     if ($search_u) {
-      $sql = "SELECT username
+      $sql = "SELECT username,uid
               FROM `user` 
-              WHERE username LIKE '$user_name_u%' 
+              WHERE uid != $user_uid AND username LIKE '$user_name_u%' 
               GROUP BY username";
       $result =$conn->query($sql);
 
      if($result->num_rows > 0){
+      
       while ($row = $result->fetch_assoc()) {
       $current_username_f = $row["username"];
       echo "<ul style='list-style-type:none'>";
-      echo "<li>".$current_username_f. "  <input type='submit' name='unfollow' value= 'unfollow'>  <input type='submit' name='follow' value= 'follow'>  </li>";
+      echo "<li>".$current_username_f. " <a href='user_follow.php?fol=$row[uid]'>follow</a>  <a href='user_unfollow.php?unfl=$row[uid]'>unfollow</a> </li>";
       echo "</ul>";
-        
       }
+
      } else {
       echo "No result";
      }
@@ -152,7 +187,25 @@ $user_uid = $_SESSION['uid'];
            
     ?> 
     <h2>Post</h2>
-        <?php
+      <form action="home.php" method="POST" >
+      <textarea name="userpost" style="resize:none" rows="4" cols="50" maxlength="200" placeholder ="What's on your mind?" > </textarea><br />
+      <input type="submit" name="proses" value= "Post">
+      </form> 
+    <?php
+        // create user's post
+        $user_post = $proses = $user_post_err = "";
+        if (isset($_POST['proses'])){
+            $user_post = nl2br($_POST['userpost']); 
+        if (!strlen(trim($user_post))){
+            $user_post_err = "<p>Please enter something.</p>";
+            echo $user_post_err;
+        }else {
+            $sqla = "INSERT INTO `twitts`(`uid`, `body`, `post_time`)
+              VALUES ('$user_uid','$user_post','$d')";
+              $resulta = mysqli_query($conn,$sqla);
+          }        
+        }
+
       $sql ="SELECT username, body, post_time
              FROM
              (SELECT u2.username,  twitts.body, post_time
@@ -188,32 +241,63 @@ $user_uid = $_SESSION['uid'];
       ?>
   </div>
 
-<!--trending first query -->
-
+<!--1 -->
+<!-- Find the post that has the most number of likes -->
   <div class="right">
     <h1>What is trending?</h1>
     <h2>The post that has the most number of likes.</h2>
     <?php
+
       $sql = "SELECT body, COUNT(thumb.tid) 
               FROM twitts, thumb
               WHERE twitts.tid = thumb.tid
               GROUP BY body
-              Having count(thumb.tid) =
-              (SELECT MAX(thumbcount) FROM
-              (SELECT body, COUNT(thumb.tid) as thumbcount
-               FROM twitts, thumb
-               WHERE twitts.tid = thumb.tid 
-               GROUP BY body) t1)";
+              Having count(thumb.tid) = (SELECT MAX(thumbcount) FROM
+                                        (SELECT body, COUNT(thumb.tid) as thumbcount
+                                         FROM twitts, thumb
+                                         WHERE twitts.tid = thumb.tid 
+                                         GROUP BY body) t1)";
+
       $result =$conn->query($sql);
 
      if($result->num_rows > 0){
       while ($row = $result->fetch_assoc()) {
         echo $row["body"];
-          echo '<br />';
-        # code...
+        echo '<br />';
       }
      }
     ?>
+
+     <!-- 2 -->
+     <!-- Find the person who has the most number of followers -->
+    <h2>Who has the most twitter follwers?</h2>
+     <p>     
+      <?php
+      $sql = "SELECT  username, COUNT(follower_id) 
+              FROM `user`,`follow` 
+              where uid = following_id 
+              GROUP BY uid
+              Having count(uid) = (SELECT MAX(followercount) 
+                                    FROM (SELECT username, COUNT(following_id) as followercount
+                                    FROM user, follow
+                                    WHERE uid = following_id 
+                                    GROUP BY uid) t1)";
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["username"];
+        echo '<br />';
+        # code...
+      }
+     }
+           
+    ?> 
+  </p>
+
+    <!-- 3 -->
+    <!-- Count the number of posts that contains the keyword “flu”, 
+    display the location of users who have made the posts as well (use “GROUP BY location”).-->
     <h2>Count the number that contains the keyword "flu"?</h2>
     <p>
       <?php
@@ -221,20 +305,26 @@ $user_uid = $_SESSION['uid'];
               FROM `twitts`, `user`
               WHERE twitts.uid = user.uid AND `body` LIKE '%flu%'
               GROUP BY location";
+
       $result =$conn->query($sql);
 
      if($result->num_rows > 0){
       while ($row = $result->fetch_assoc()) {
-        echo $row["body"];
+        echo $row["COUNT(body)"];
+        echo " ";
+        echo $row["location"] ;
         echo '<br />';
-        
       }
      } else {
       echo "No result";
      }
-     ?></p>
+     ?>
+   </p>
   
-    
+
+    <!-- 4 -->  
+    <!-- User input a person’s twitter name, find all the posts made by that person  -->
+
     <h2>Find all the posts made by one person</h2>
     <form action="home.php" method="POST">
     <input type="text" name ="user_s" placeholder= "Search for user...." />
@@ -250,48 +340,27 @@ $user_uid = $_SESSION['uid'];
 if(isset($_POST['submit_search'])){
 $search = $_POST['submit_search'];
 }
-  
     if ($search) {
       $sql = "SELECT body
               FROM `user`,`twitts` 
               WHERE user.uid =  twitts.uid AND username LIKE '$user_name%' 
-              GROUP BY body";
+              GROUP BY post_time DESC";
+
       $result =$conn->query($sql);
 
      if($result->num_rows > 0){
       while ($row = $result->fetch_assoc()) {
         echo $row["body"];
         echo '<br />';
-        
       }
      } else {
       echo "No result";
      }
-   }
-           
+   }          
     ?> 
     
-    <h2>Who has the most twitter follwers?</h2>
-     <p>     
-      <?php
-      $sql = "SELECT username
-              FROM `user`,`follow` 
-              WHERE uid = following_id 
-              GROUP BY uid
-              ORDER BY COUNT(uid) DESC
-              LIMIT 1";
-      $result =$conn->query($sql);
-
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["username"];
-        # code...
-      }
-     }
-           
-    ?> 
-  </p>
-  
+  <!-- 5 -->
+  <!-- User input a year, find the person who twits the most in that year  -->
     <h2>Who twits the most in a year?</h2>
     
     <form action="home.php" method="POST">
@@ -420,7 +489,6 @@ $search = $_POST['submit_search'];
       </form>
 
     <?php
-
     $year ="";
     $year_list="";
     if(isset($_POST['submit'])){
@@ -429,17 +497,22 @@ $search = $_POST['submit_search'];
   
     if ($year) {
       # code...
-        $sql = "SELECT username
-              FROM `user`,`twitts` 
-              WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '$year%' 
-              GROUP BY twitts.uid
-              ORDER BY COUNT(twitts.uid) DESC
-              LIMIT 1";
+        $sql = "SELECT username, COUNT(twitts.uid)
+                FROM `user`,`twitts` 
+                WHERE user.uid =  twitts.uid AND twitts.post_time LIKE '$year%' 
+                GROUP BY twitts.uid
+                HAVING COUNT(twitts.uid) = (SELECT MAX(twittscount) from
+                                            (SELECT COUNT(twitts.uid) as twittscount      
+                                            FROM twitts, user
+                                            WHERE twitts.uid = user.uid 
+                                            GROUP BY twitts.uid) t1)";
+
       $result =$conn->query($sql);
 
      if($result->num_rows > 0){
       while ($row = $result->fetch_assoc()) {
         echo $row["username"];
+        echo '<br />';
       }
     }else{
       echo "Please select another year";

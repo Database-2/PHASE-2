@@ -52,11 +52,7 @@ if (empty($username)){
 	$email_err = "<p>Please enter a email.</p>";
 	echo $email_err;
 }
-/*if (empty($location)){
-	$location_err = "<p>Please enter your location.</p>";
-	echo $location_err;
-} */
-//if( (!empty($username)) && (!empty($pwd)) && (!empty($email)) && (!empty($location)) ) {
+
 if( (!empty($username)) && (!empty($pwd)) && (!empty($email)) ) {
 	
 	//check for duplicates
@@ -72,11 +68,10 @@ if( (!empty($username)) && (!empty($pwd)) && (!empty($email)) ) {
 		$email_err = "This account is already exists.";
 		echo $email_err;
 	}else {
-		///*
 		$sql = "INSERT INTO `user`(`username`, `password`, `email`, `location`, `regis_date`)
 		VALUES ('$username','$pwd','$email','$loc','$d')";
 		$result = mysqli_query($conn,$sql);
-		//*/
+		
 	header("Location: login.php");
 	}
 }
