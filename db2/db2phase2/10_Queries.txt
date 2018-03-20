@@ -72,6 +72,9 @@ $row = mysqli_fetch_assoc($result);
 $_SESSION['uid']=$row["uid"];
 header("Location: home.php");
 ////////////////////////////////////////////////////////////////
+6.
+After log in, find all the senders of messages to the user 
+
 7.
 After log in, user posts a new twit 
 $sqla = "INSERT INTO `twitts`(`uid`, `body`, `post_time`)
