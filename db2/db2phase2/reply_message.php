@@ -15,19 +15,6 @@ if(isset($id)){
   $id = $_SESSION['receiver'];
 }
 
-if(isset($_GET['mid'])){
-  $mid = $_GET['mid'];
-}
-if(!isset($_GET['mid'])){
-  //header("Location: inbox.php");
-  //exit();
-  $mid = $_SESSION['message_id'];  
-}
-if(isset($id)){
-  $_SESSION['message_id'] = $mid;
-  $mid = $_SESSION['message_id'];
-}
-
 //if(!isset($id)){
 //  header("Location: inbox.php");
 //  exit();
@@ -153,9 +140,41 @@ if(isset($receiver_uid)){
     </div> -->
 
     <div class="menuitem">Follwers
-    <output name="Follower" for= "followers"></output></div>
+    <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,user 
+              WHERE $user_uid = uid AND following_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+     </div>
     <div class="menuitem">Follwing
-    <output name="Following" for= "following"></output></div>
+          <?php
+      $sql = "SELECT COUNT(*) 
+              FROM `follow`,user 
+              WHERE $user_uid = uid AND follower_id = uid";
+
+      $result =$conn->query($sql);
+
+     if($result->num_rows > 0){
+      while ($row = $result->fetch_assoc()) {
+        echo $row["COUNT(*)"];
+        echo '<br />';
+      }
+     } else {
+      echo "0";
+     }
+     ?>
+    </div>
     <div class="menuitem">Message
 	  <div>
 	    <form action="inbox.php" method="POST" style='display:inline;'>
@@ -211,11 +230,7 @@ if(isset($receiver_uid)){
 	    $sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
 		VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
 		$result = mysqli_query($conn,$sql);
-		
-		$sql = "DELETE FROM message WHERE message_id = $mid"; 
-        $result = mysqli_query($conn,$sql);
-		
-		$_SESSION['message_id'] = "";
+
 		mysqli_close($conn);
 		header('Location: inbox.php');
 		exit;
