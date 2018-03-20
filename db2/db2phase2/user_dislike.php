@@ -12,27 +12,39 @@ if(isset($user_uid)){
 $user_uid = $_SESSION['uid'];
 }
 
-/*
-//get data and time
-$da = date_default_timezone_set("America/New_York");
-$d = date("Y-m-d h:i:sa");
- 
- 	
-	if( isset($_GET['fol']) )
+	if( isset($_GET['disl']) )
 	{
-	$id = $_GET['fol'];
-	//check for duplicates
-	$get_num_username = "SELECT `following_id` FROM `follow` WHERE follower_id = $user_uid AND `following_id` = $id";
-	$check_for_username = mysqli_query($conn,$get_num_username);
+	$disk_tid = $_GET['disl'];
+	// check for duplicates 
+	// for  likes
+	$get_num_dislike = "SELECT * FROM `dislike` WHERE `uid` = $user_uid AND `tid` = $disk_tid";
+	$check_for_dislike = mysqli_query($conn,$get_num_dislike);
 
-		if (mysqli_num_rows($check_for_username) > 0) {
+	//
+	//
+	$get_num_like = "SELECT * FROM `thumb` WHERE `uid` = $user_uid AND `tid` = $disk_tid";
+	$check_for_like = mysqli_query($conn,$get_num_like);
+
+		if (mysqli_num_rows($check_for_dislike) > 0) {
 			echo "<meta http-equiv='refresh' content='0;url=home.php'>";
-		}else {
-		$sql= "INSERT INTO `follow`(`follower_id`, `following_id`, `follow_time`) 
-				VALUES ('$user_uid','$id','$d')";
-		$res= mysqli_query($conn,$sql) or die("Failed".mysqli_error());
+		}elseif (mysqli_num_rows($check_for_like) > 0) {
+
+		$sqllis = "	DELETE FROM `thumb` WHERE `uid` = $user_uid AND `tid` = $disk_tid";
+		$reslis = mysqli_query($conn,$sqllis); //or die("Failed".mysqli_error());
+		
+		$sqldis= "INSERT INTO `dislike`(`uid`, `tid`) 
+				VALUES ('$user_uid','$disk_tid')";
+		$resdis= mysqli_query($conn,$sqldis) or die("Failed".mysqli_error());
 		echo "<meta http-equiv='refresh' content='0;url=home.php'>";
+			
+		}else {
+
+		$sqldisl= "INSERT INTO `dislike`(`uid`, `tid`) 
+				VALUES ('$user_uid','$disk_tid')";
+		$resdisl= mysqli_query($conn,$sqldisl) or die("Failed".mysqli_error());
+		echo "<meta http-equiv='refresh' content='0;url=home.php'>";
+		}
 	}
-	}
-*/
+
+	
 ?>

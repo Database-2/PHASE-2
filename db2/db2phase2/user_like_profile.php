@@ -28,7 +28,7 @@ $user_uid = $_SESSION['uid'];
 	$check_for_dislike = mysqli_query($conn,$get_num_like);
 
 		if (mysqli_num_rows($check_for_like) > 0) {
-			echo "<meta http-equiv='refresh' content='0;url=home.php'>";
+			echo "<meta http-equiv='refresh' content='0;url=profile.php'>";
 		}elseif (condition) {
 
 		$sqldis = "	DELETE FROM `dislike` WHERE `uid` = $user_uid AND `tid` = lik_tid;"
