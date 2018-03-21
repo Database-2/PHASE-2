@@ -198,7 +198,8 @@ $d = date("Y-m-d h:i:sa");
       //comment 
       $sqlcomm = "SELECT `username`, comment.body, `comment_time` 
                   FROM `user`,`comment` 
-                  WHERE user.uid = comment.uid AND  comment.tid = $tidl";
+                  WHERE user.uid = comment.uid AND  comment.tid = $tidl
+                  ORDER By comment_time ASC";
       $resultcomm =$conn->query($sqlcomm);  
 
       // likes
@@ -218,32 +219,40 @@ $d = date("Y-m-d h:i:sa");
         //numbers of dislike
         $dislike = $rowdisk["COUNT(*)"];
         echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike_profile.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
-        //echo "<li>" .$user_comm. " " .$date_comm.  " <a href='user_comment_profile.php?del=$row[tid]'>Delete</a> </li>";
-        //echo "<li>" .$comm_body. "</li>";
-        //echo "</ul>";
         }
       
         } if($resultcomm->num_rows > 0){
         while (($rowcomm = $resultcomm->fetch_assoc())){
-        //numbers of like
-        $likes = $rowl["COUNT(*)"];
-        
-        //numbers of dislike
-        $dislike = $rowdisk["COUNT(*)"];
-
         //display comments
         $user_comm = $rowcomm["username"];
         $date_comm = $rowcomm["comment_time"];
         $comm_body = $rowcomm["body"];
 
-        //echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike_profile.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
         echo "<li>" .$user_comm. " " .$date_comm.  " <a href='user_comment_profile.php?del=$row[tid]'>Delete</a> </li>";
-        echo "<li>" .$comm_body. "</li>";
-        //echo "</ul>";
+        echo "<li>" .$comm_body. "</li>";       
       }
+      echo "<li> <form action='profile.php' method='POST' > </li>";
+      echo "<li> <input type='text' name ='commenter' placeholder= 'Enter a comment....' />  <input type='submit' name='enter_comm' value= 'Enter'>
+            </form> </li>";
+
+      $user_enter = $commenter_enter = "";
+
+      if(isset($_POST['commenter'])){
+        $user_enter = $_POST['commenter'];
+      }if(isset($_POST['enter_comm'])){
+       $commenter_enter = $_POST['enter_comm'];
+      } if ($commenter_enter) {
+           if (empty($user_enter)){
+               $comm_err = "<p>Please enter a comment.</p>";
+               echo $comm_err;
+              }else{
+                $sql_comm = "INSERT INTO `comment`(`uid`, `tid`, `body`, `comment_time`) 
+                             VALUES ('$user_uid', '$tidl', '$user_enter','$d')";
+                $result_user_comm =$conn->query($sql_comm);
+              }
+       }
       }
-      //}
-      echo "</ul>";
+        echo "</ul>";
      }
   }else {
      echo "No result";
