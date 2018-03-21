@@ -196,7 +196,7 @@ $d = date("Y-m-d h:i:sa");
       
 
       //comment 
-      $sqlcomm = "SELECT `username`, comment.body, `comment_time` 
+      $sqlcomm = "SELECT `username`, comment.body, `comment_time`, `cid` 
                   FROM `user`,`comment` 
                   WHERE user.uid = comment.uid AND  comment.tid = $tidl";
       $resultcomm =$conn->query($sqlcomm);  
@@ -237,7 +237,7 @@ $d = date("Y-m-d h:i:sa");
         $comm_body = $rowcomm["body"];
 
         //echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike_profile.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
-        echo "<li>" .$user_comm. " " .$date_comm.  " <a href='user_comment_profile.php?del=$row[tid]'>Delete</a> </li>";
+        echo "<li>" .$user_comm. " " .$date_comm.  " <a href='comment_delete.php?del=$rowcomm[cid]'>Delete</a> </li>";
         echo "<li>" .$comm_body. "</li>";
         //echo "</ul>";
       }
