@@ -198,7 +198,7 @@ $d = date("Y-m-d h:i:sa");
       //comment 
       $sqlcomm = "SELECT `username`, comment.body, `comment_time`, `cid` 
                   FROM `user`,`comment` 
-                  WHERE user.uid = comment.uid AND  comment.tid = $tidl
+                  WHERE user.uid = comment.uid AND comment.tid = $tidl
                   ORDER By comment_time ASC";
       $resultcomm =$conn->query($sqlcomm);  
 
@@ -235,15 +235,12 @@ $d = date("Y-m-d h:i:sa");
 
       }
     }
-      echo "<li> <form action='profile.php' method='POST' > </li>";
-      echo "<li> <input type='text' name ='u_commenter' placeholder= 'Enter a comment....' /> 
-            </form> </li>";   
-      $u_comm = "";
-      if(isset($_POST['u_commenter'])){
-        $u_comm = $_POST['u_commenter'];
-      }
-        echo "<li> <a href='user_comment_profile.php?commm=$row[tid]&amp;text_c=$u_comm'>Enter</a> </li>";   
-        echo "</ul>";
+      echo "<li> <form action='user_comment_profile.php' method='POST' > </li>";
+      echo "<li> <input type='text' name ='u_commenter' placeholder= 'Enter a comment....' />   
+                 <input type='hidden' name = tid  value= $row[tid] />
+                 <input type='submit' name = 'user_click' value='enter' /> </li>"; 
+      echo "<li> </form> </li>";        
+      echo "</ul>";
      }
   }else {
      echo "No result";

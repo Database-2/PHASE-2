@@ -38,7 +38,7 @@ $user_enter = $commenter_enter= "";
                              VALUES ('$user_uid', '$tidl', '$user_enter','$d')";
                 $result_user_comm =$conn->query($sql_comm);
                 $_SESSION['temp_comm'] = "";
-                echo "<meta http-equiv='refresh' content='0;url=profile.php'>";
+                echo "<meta http-equiv='refresh' content='0;url=home.php'>";
               }
       }
 ?>

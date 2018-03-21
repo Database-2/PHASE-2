@@ -206,7 +206,7 @@ $d = date("Y-m-d h:i:sa");
               $resulta = mysqli_query($conn,$sqla);
           }        
         }
-
+      // display all users' post 
       $sql ="SELECT username, body, post_time, tid
              FROM
              (SELECT u2.username,  twitts.body, post_time, twitts.tid
@@ -235,6 +235,13 @@ $d = date("Y-m-d h:i:sa");
         echo $row["body"];
         echo '<br />';
       
+      //comment 
+      $sqlcomm = "SELECT `username`, comment.body, `comment_time`, `cid` 
+                  FROM `user`,`comment` 
+                  WHERE user.uid = comment.uid AND comment.tid = $tidl
+                  ORDER By comment_time ASC";
+      $resultcomm =$conn->query($sqlcomm);  
+
       // likes
       $sqlli = "SELECT COUNT(*) FROM `thumb` WHERE  tid= $tidl";
       $resultli =$conn->query($sqlli);
@@ -248,9 +255,32 @@ $d = date("Y-m-d h:i:sa");
         $likes = $rowli["COUNT(*)"];
         $dislike = $rowdisk["COUNT(*)"];
       echo "<a href='user_like.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "";
+      echo '<br />';
       }
-      }
+      }if($resultcomm->num_rows > 0){
+        while (($rowcomm = $resultcomm->fetch_assoc())){
+        //display comments
+        $user_comm = $rowcomm["username"];
+        $date_comm = $rowcomm["comment_time"];
+        $comm_body = $rowcomm["body"];     
+
+        //echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike_profile.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
+        echo $user_comm; 
+        echo " "; 
+        echo $date_comm;
         echo '<br />';
+        echo $comm_body;
+        echo '<br />';
+        //echo "</ul>";
+
+      }
+    }
+      echo "<form action='user_comment_home.php' method='POST' >";
+      echo "<input type='text' name ='u_commenter' placeholder= 'Enter a comment....' />    
+            <input type='hidden' name = tid  value= $row[tid] />
+            <input type='submit' name = 'user_click' value='enter' /> "; 
+      echo "</form>"; 
+      echo '<br />';
         }
       }else {
           echo "No result";
