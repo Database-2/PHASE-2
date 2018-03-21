@@ -40,7 +40,8 @@ if ($login) {
         $result = mysqli_query($conn,$sql);
 		$row = mysqli_fetch_assoc($result);
 		$_SESSION['uid']=$row["uid"];
-		$_SESSION['receiver'] = "";		
+		$_SESSION['receiver'] = "";
+		$_SESSION['temp_comm']	= "";	
 		header("Location: home.php");
 
 	}

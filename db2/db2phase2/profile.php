@@ -234,27 +234,15 @@ $d = date("Y-m-d h:i:sa");
         //echo "</ul>";
 
       }
+    }
       echo "<li> <form action='profile.php' method='POST' > </li>";
-      echo "<li> <input type='text' name ='commenter' placeholder= 'Enter a comment....' />  <input type='submit' name='enter_comm' value= 'Enter'>
-            </form> </li>";
-
-      $user_enter = $commenter_enter = "";
-
-      if(isset($_POST['commenter'])){
-        $user_enter = $_POST['commenter'];
-      }if(isset($_POST['enter_comm'])){
-       $commenter_enter = $_POST['enter_comm'];
-      } if ($commenter_enter) {
-           if (empty($user_enter)){
-               $comm_err = "<p>Please enter a comment.</p>";
-               echo $comm_err;
-              }else{
-                $sql_comm = "INSERT INTO `comment`(`uid`, `tid`, `body`, `comment_time`) 
-                             VALUES ('$user_uid', '$tidl', '$user_enter','$d')";
-                $result_user_comm =$conn->query($sql_comm);
-              }
-       }
+      echo "<li> <input type='text' name ='u_commenter' placeholder= 'Enter a comment....' /> 
+            </form> </li>";   
+      $u_comm = "";
+      if(isset($_POST['u_commenter'])){
+        $u_comm = $_POST['u_commenter'];
       }
+        echo "<li> <a href='user_comment_profile.php?commm=$row[tid]&amp;text_c=$u_comm'>Enter</a> </li>";   
         echo "</ul>";
      }
   }else {
