@@ -196,7 +196,7 @@ $d = date("Y-m-d h:i:sa");
       
 
       //comment 
-      $sqlcomm = "SELECT `username`, comment.body, `comment_time` 
+      $sqlcomm = "SELECT `username`, comment.body, `comment_time`, `cid` 
                   FROM `user`,`comment` 
                   WHERE user.uid = comment.uid AND  comment.tid = $tidl
                   ORDER By comment_time ASC";
@@ -226,10 +226,13 @@ $d = date("Y-m-d h:i:sa");
         //display comments
         $user_comm = $rowcomm["username"];
         $date_comm = $rowcomm["comment_time"];
-        $comm_body = $rowcomm["body"];
+        $comm_body = $rowcomm["body"];     
 
-        echo "<li>" .$user_comm. " " .$date_comm.  " <a href='user_comment_profile.php?del=$row[tid]'>Delete</a> </li>";
-        echo "<li>" .$comm_body. "</li>";       
+        //echo "<li> <a href='user_like_profile.php?lik=$row[tid]'>Likes</a> "  .$likes.  " <a href='user_dislike_profile.php?disl=$row[tid]'>Dislike</a> "  .$dislike. "</li>";
+        echo "<li>" .$user_comm. " " .$date_comm.  " <a href='comment_delete.php?del=$rowcomm[cid]'>Delete</a> </li>";
+        echo "<li>" .$comm_body. "</li>";
+        //echo "</ul>";
+
       }
       echo "<li> <form action='profile.php' method='POST' > </li>";
       echo "<li> <input type='text' name ='commenter' placeholder= 'Enter a comment....' />  <input type='submit' name='enter_comm' value= 'Enter'>
