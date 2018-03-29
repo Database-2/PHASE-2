@@ -2,12 +2,11 @@
 include 'config.php';
 session_start();
 
+// Set up user ids for message sending
 if(isset($_GET['id'])){
   $id = $_GET['id'];
 }
 if(!isset($_GET['id'])){
-  //header("Location: inbox.php");
-  //exit();
   $id = $_SESSION['receiver'];  
 }
 if(isset($id)){
@@ -15,14 +14,10 @@ if(isset($id)){
   $id = $_SESSION['receiver'];
 }
 
-//if(!isset($id)){
-//  header("Location: inbox.php");
-//  exit();
-//}
-
+// If there is no user to send message to then load login page
 if(!isset($_SESSION['uid'])){
-  header("Location: login.php");
-  exit();
+	header("Location: login.php");
+	exit();
 }
 
 //get data and time
@@ -30,12 +25,7 @@ $da = date_default_timezone_set("America/New_York");
 $d = date("Y-m-d h:i:sa");
 
 if(isset($_SESSION['username'])){
- // $get_id_username = "SELECT uid FROM `user` WHERE `username` = $_SESSION[$username]";
- // echo $get_id_username;
-//echo $_SESSION['username'];
-
 }
-
 if(isset($_SESSION['uid'])){
 }
 
@@ -141,39 +131,41 @@ if(isset($receiver_uid)){
 
     <div class="menuitem">Follwers
     <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,user 
-              WHERE $user_uid = uid AND following_id = uid";
+		// Display follower count
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND following_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
-     ?>
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
+	?>
      </div>
     <div class="menuitem">Follwing
-          <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,user 
-              WHERE $user_uid = uid AND follower_id = uid";
+    <?php
+		// Display following count
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND follower_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
-     ?>
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
+	?>
     </div>
     <div class="menuitem">Message
 	  <div>
@@ -201,41 +193,47 @@ if(isset($receiver_uid)){
 	</form>
 	
 	<?php
-      $search = $user_name ="";
-	  
-	    $sql = "SELECT user.uid
-                FROM `user` 
-                WHERE user.username = '$id'"; 
-        $result = mysqli_query($conn,$sql);
-		$row = mysqli_fetch_assoc($result); 
-	  
-	if(isset($user_name)){
-      $user_name = $id;
-	}
-	  
-      if(isset($_POST['send_mes'])){
-        $search = $_POST['send_mes'];
-      }
-  
-      if ($search) {
-        $sql = "SELECT user.uid
-                FROM `user` 
-                WHERE user.username = '$id'"; 
-        $result = mysqli_query($conn,$sql);
-		
-		$row = mysqli_fetch_assoc($result);  
-		$receiver_uid = $row["uid"];
-		$user_mes = $_POST['user_mes'];
-		
-	    $sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
-		VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
+		$search = $user_name ="";
+
+		// Checks database for user to receive message 
+		$sql = "SELECT user.uid
+				FROM `user` 
+				WHERE user.username = '$id'"; 
 		$result = mysqli_query($conn,$sql);
+		$row = mysqli_fetch_assoc($result); 
+		
+		// Sets the user to receive the message
+		if(isset($user_name)){
+			$user_name = $id;
+		}
 
-		mysqli_close($conn);
-		header('Location: inbox.php');
-		exit;
+		// Checks the message body
+		if(isset($_POST['send_mes'])){
+			$search = $_POST['send_mes'];
+		}
 
-      } 
+		// If message body is not empty
+		if ($search) {
+			// Checks database for user to receive message
+			$sql = "SELECT user.uid
+					FROM `user` 
+					WHERE user.username = '$id'"; 
+			$result = mysqli_query($conn,$sql);
+
+			$row = mysqli_fetch_assoc($result);  
+			$receiver_uid = $row["uid"];
+			$user_mes = $_POST['user_mes'];
+
+			// Adds the message to the message table
+			$sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
+					VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
+			$result = mysqli_query($conn,$sql);
+
+			// Closes page and opens inbox page
+			mysqli_close($conn);
+			header('Location: inbox.php');
+			exit;
+		} 
     ?> 
 	
   </div>

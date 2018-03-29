@@ -3,8 +3,8 @@ include 'config.php';
 session_start();
 
 if(!isset($_SESSION['uid'])){
-  header("Location: login.php");
-  exit();
+	header("Location: login.php");
+	exit();
 }
 
 //get data and time
@@ -12,12 +12,7 @@ $da = date_default_timezone_set("America/New_York");
 $d = date("Y-m-d h:i:sa");
 
 if(isset($_SESSION['username'])){
- // $get_id_username = "SELECT uid FROM `user` WHERE `username` = $_SESSION[$username]";
- // echo $get_id_username;
-//echo $_SESSION['username'];
-
 }
-
 if(isset($_SESSION['uid'])){
 }
 
@@ -123,38 +118,40 @@ if(isset($receiver_uid)){
 
     <div class="menuitem">Follwers
     <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,user 
-              WHERE $user_uid = uid AND following_id = uid";
+		// Display follower count
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND following_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
-     ?>
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
+	?>
      </div>
     <div class="menuitem">Follwing
-          <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,user 
-              WHERE $user_uid = uid AND follower_id = uid";
+    <?php
+		// Display following count  
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND follower_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
      ?>
     </div>
     <div class="menuitem">Message
@@ -177,33 +174,39 @@ if(isset($receiver_uid)){
 	</form>
 	
 	<?php
-      $search = $user_name ="";
+		$search = $user_name ="";
 
-      if(isset($_POST['user_rec'])){
-        $user_name = $_POST['user_rec'];
-      }
-      if(isset($_POST['send_mes'])){
-        $search = $_POST['send_mes'];
-      }
-  
-      if ($search) {
-        $sql = "SELECT user.uid
-                FROM `user` 
-                WHERE user.username = '$user_name'"; 
-        $result = mysqli_query($conn,$sql);
-		
-      if($result->num_rows > 0){
-		$row = mysqli_fetch_assoc($result);  
-		$receiver_uid = $row["uid"];
-		$user_mes = $_POST['user_mes'];
-		
-	    $sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
-		VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
-		$result = mysqli_query($conn,$sql);
-      } else {
-          echo "No result";
-        }
-      } 
+		// Sets the user to receive the message
+		if(isset($_POST['user_rec'])){
+			$user_name = $_POST['user_rec'];
+		}
+		// Checks the message body
+		if(isset($_POST['send_mes'])){
+			$search = $_POST['send_mes'];
+		}
+
+		// If message body is not empty
+		if ($search) {
+			// Checks database for user to receive message
+			$sql = "SELECT user.uid
+					FROM `user` 
+					WHERE user.username = '$user_name'"; 
+			$result = mysqli_query($conn,$sql);
+
+			// If the user exists send the message
+			if($result->num_rows > 0){
+				$row = mysqli_fetch_assoc($result);  
+				$receiver_uid = $row["uid"];
+				$user_mes = $_POST['user_mes'];
+
+				// Adds the message to the message table
+				$sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
+					VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
+				$result = mysqli_query($conn,$sql);
+			} else {
+				echo "No User Found";
+			}
+		} 
     ?> 
 	
   </div>

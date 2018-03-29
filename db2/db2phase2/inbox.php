@@ -2,6 +2,7 @@
 include 'config.php';
 session_start();
 
+// Set up user and ids 
 if(!isset($_SESSION['uid'])){
   header("Location: login.php");
   exit();
@@ -108,39 +109,41 @@ $user_uid = $_SESSION['uid'];
 
     <div class="menuitem">Follwers
     <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,user 
-              WHERE $user_uid = uid AND following_id = uid";
+		// Display follower count
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND following_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
      ?>
      </div>
     <div class="menuitem">Follwing
-          <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,user 
-              WHERE $user_uid = uid AND follower_id = uid";
+    <?php
+		// Display following count  
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND follower_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
-     ?>
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
+    ?>
     </div>
     <div class="menuitem">Message
 	  <form action="send.php" method="POST" >
@@ -154,28 +157,28 @@ $user_uid = $_SESSION['uid'];
 	</form>
 	
 	<?php
-  $sql ="SELECT DISTINCT username, body, send_time, message_id  
-         FROM user, message
-         WHERE user.uid = sender_id
-			   AND receiver_id = $user_uid
-         ORDER By send_time DESC";
+		// Makes a table of messages sent to the logged in user
+		$sql ="SELECT DISTINCT username, body, send_time, message_id  
+				FROM user, message
+				WHERE user.uid = sender_id
+				AND receiver_id = $user_uid
+				ORDER By send_time DESC";
 
-  $result =$conn->query($sql);
-	  while ($row = $result->fetch_assoc()) {
-        $username = $row['username']; 
-        $current_username = $row["username"];
-        $date = $row["send_time"];
-        $body = $row["body"];
-		$list_id = $row["message_id"];
-        echo "<ul style='list-style-type:none'>";
-        echo "<li>".$current_username." ".$date. "</li>";
-        echo "<li>".$body."</li>";
-		echo "<li><a href='delete_message.php?id=".$row['message_id']."'>
-			   Delete</a> <a href='reply_message.php?id=".$row['username']."&amp;mid=".$row['message_id']."'>Reply</a></li>";
-        echo "</ul>";		
-      }
-
-
+		$result =$conn->query($sql);
+		// Prints every message from above table for current user to HTML page
+		while ($row = $result->fetch_assoc()) {
+			$username = $row['username']; 
+			$current_username = $row["username"];
+			$date = $row["send_time"];
+			$body = $row["body"];
+			$list_id = $row["message_id"];
+			echo "<ul style='list-style-type:none'>";
+			echo "<li>".$current_username." ".$date. "</li>";
+			echo "<li>".$body."</li>";
+			echo "<li><a href='delete_message.php?id=".$row['message_id']."'>
+				Delete</a> <a href='reply_message.php?id=".$row['username']."&amp;mid=".$row['message_id']."'>Reply</a></li>";
+			echo "</ul>";		
+		}
     ?> 
 	
   </div>

@@ -104,39 +104,41 @@ $d = date("Y-m-d h:i:sa");
 
     <div class="menuitem">Follwers
     <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,`user` 
-              WHERE $user_uid = uid AND following_id = uid";
+		// Display follower count
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND following_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
-     ?>
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
+    ?>
      </div>
     <div class="menuitem">Follwing
-          <?php
-      $sql = "SELECT COUNT(*) 
-              FROM `follow`,user 
-              WHERE $user_uid = uid AND follower_id = uid";
+    <?php
+		// Display following count  
+		$sql = "SELECT COUNT(*) 
+				FROM `follow`,user 
+				WHERE $user_uid = uid AND follower_id = uid";
 
-      $result =$conn->query($sql);
+		$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      while ($row = $result->fetch_assoc()) {
-        echo $row["COUNT(*)"];
-        echo '<br />';
-      }
-     } else {
-      echo "0";
-     }
-     ?>
+		if($result->num_rows > 0){
+			while ($row = $result->fetch_assoc()) {
+				echo $row["COUNT(*)"];
+				echo '<br />';
+			}
+		} else {
+			echo "0";
+		}
+    ?>
     </div>
     <div class="menuitem">Message
 	  <div>
