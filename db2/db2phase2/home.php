@@ -166,6 +166,7 @@ $d = date("Y-m-d h:i:sa");
 			$user_name_u = $_POST['user_f']; 
 		}
 		if(isset($_POST['search_user'])){
+			$search_u = $_POST['search_user'];
 		} 
 		if ($search_u) {
 			$sql = "SELECT username,uid
