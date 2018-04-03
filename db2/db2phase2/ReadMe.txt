@@ -9,4 +9,7 @@ For this web database assignment it is preferable that the user/grader would sta
 
 The first five queries for the assignment can be found on the right hand side in the blue box on the home 
   page right after logging in. Query six can be found by clicking the inbox button on the left hand side 
-  of every page. The seventh query can be found on the home page.
+  of every page. The seventh query can be found on the home page. The eighth query can be found on the 
+  home page; enter the name of the user you want to follow in the search bar then click search and then
+  click follow or unfollow. The ninth query can be foundon either the home or profile pages. The tenth 
+  query can be found on the profile page.
