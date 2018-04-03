@@ -160,34 +160,32 @@ $d = date("Y-m-d h:i:sa");
     <input type="submit" name ="search_user" value="Seach"/>
     </form>
             
-<?php
- $search_u = $user_name_u ="";
- if(isset($_POST['user_f'])){
-   $user_name_u = $_POST['user_f']; 
- }if(isset($_POST['search_user'])){
- $search_u = $_POST['search_user'];
- } 
-    if ($search_u) {
-      $sql = "SELECT username,uid
-              FROM `user` 
-              WHERE uid != $user_uid AND username LIKE '$user_name_u%' 
-              GROUP BY username";
-      $result =$conn->query($sql);
+	<?php
+		$search_u = $user_name_u ="";
+		if(isset($_POST['user_f'])){
+			$user_name_u = $_POST['user_f']; 
+		}
+		if(isset($_POST['search_user'])){
+		} 
+		if ($search_u) {
+			$sql = "SELECT username,uid
+					FROM `user` 
+					WHERE uid != $user_uid AND username LIKE '$user_name_u%' 
+					GROUP BY username";
+			$result =$conn->query($sql);
 
-     if($result->num_rows > 0){
-      
-      while ($row = $result->fetch_assoc()) {
-      $current_username_f = $row["username"];
-      echo "<ul style='list-style-type:none'>";
-      echo "<li>".$current_username_f. " <a href='user_follow.php?fol=$row[uid]'>follow</a>  <a href='user_unfollow.php?unfl=$row[uid]'>unfollow</a> </li>";
-      echo "</ul>";
-      }
+			if($result->num_rows > 0){
+				while ($row = $result->fetch_assoc()) {
+				$current_username_f = $row["username"];
+				echo "<ul style='list-style-type:none'>";
+				echo "<li>".$current_username_f. " <a href='user_follow.php?fol=$row[uid]'>follow</a>  <a href='user_unfollow.php?unfl=$row[uid]'>unfollow</a> </li>";
+				echo "</ul>";
+			}
+		} else {
+			echo "No result";
+		}
+		}
 
-     } else {
-      echo "No result";
-     }
-   }
-           
     ?> 
     <h2>Post</h2>
       <form action="home.php" method="POST" >
