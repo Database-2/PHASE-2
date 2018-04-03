@@ -352,7 +352,7 @@ $d = date("Y-m-d h:i:sa");
       <?php
       $sql = "SELECT COUNT(body), location
               FROM `twitts`, `user`
-              WHERE twitts.uid = user.uid AND `body` LIKE '%flu%'
+              WHERE twitts.uid = user.uid AND `body` regexp '[[:<:]]flu[[:>:]]'
               GROUP BY location";
 
       $result =$conn->query($sql);
