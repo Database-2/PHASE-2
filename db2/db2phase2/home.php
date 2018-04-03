@@ -161,6 +161,7 @@ $d = date("Y-m-d h:i:sa");
     </form>
             
 	<?php
+		// Set up the user search bar
 		$search_u = $user_name_u ="";
 		if(isset($_POST['user_f'])){
 			$user_name_u = $_POST['user_f']; 
@@ -168,6 +169,7 @@ $d = date("Y-m-d h:i:sa");
 		if(isset($_POST['search_user'])){
 			$search_u = $_POST['search_user'];
 		} 
+		// Looks for given user
 		if ($search_u) {
 			$sql = "SELECT username,uid
 					FROM `user` 
@@ -175,6 +177,7 @@ $d = date("Y-m-d h:i:sa");
 					GROUP BY username";
 			$result =$conn->query($sql);
 
+			// Displays the user and allows for following and unfollowing
 			if($result->num_rows > 0){
 				while ($row = $result->fetch_assoc()) {
 				$current_username_f = $row["username"];
