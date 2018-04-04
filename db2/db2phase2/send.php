@@ -203,6 +203,7 @@ if(isset($receiver_uid)){
 				$sql = "INSERT INTO `message`(`sender_id`, `receiver_id`, `body`, `send_time`)
 					VALUES ('$user_uid','$receiver_uid','$user_mes','$d')";
 				$result = mysqli_query($conn,$sql);
+				echo "Message Sent";
 			} else {
 				echo "No User Found";
 			}
