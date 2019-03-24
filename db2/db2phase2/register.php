@@ -53,7 +53,7 @@ if ($submit) {
 		echo $email_err;
 	}
 	
-	// If a username, a password and an emial is entered
+	// If the username, password and emial are entered
 	if( (!empty($username)) && (!empty($pwd)) && (!empty($email)) ) {
 		//check for duplicates
 		$get_num_username = "SELECT * FROM `user` WHERE `username` = '$username' ";
